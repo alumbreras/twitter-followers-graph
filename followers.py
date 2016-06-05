@@ -51,8 +51,7 @@ def api_followers(ego_screenname):
             # If user is already tracked, get their followers from file
             if os.path.isfile(fname):
                 with open(fname, 'r') as f:
-                    print str(u) + " already in file\n"
-                continue
+                    print str(u) + " had already been fetched\n"
     
             # otherwise use the API
             else:
