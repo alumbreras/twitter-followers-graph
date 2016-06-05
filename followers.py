@@ -13,6 +13,8 @@ from xml.sax.saxutils import escape
 CONSUMER_KEY = ''
 CONSUMER_SECRET = ''
 
+
+
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 api = tweepy.API(auth)
 
@@ -176,13 +178,13 @@ def graph(ego_screenname):
         # Add edges to ego and between ego followers
         for f_id, ff_ids in all_followers.iteritems():
             for ff_id in set(ff_ids).intersection(neighbourhood):
-                out.write("<edge id='edge%d' source='%d' target='%d' />\n" % (edge_id, ff_id, f_id))
+                out.write("<edge id='edge%d' source='%d' target='%d' />\n" % (edge_id, f_id, ff_id))
                 edge_id += 1
         
         # Close graphml object
         out.write("</graph></graphml>")
 
 if __name__ == '__main__':
-    api_followers('alberto_lm')
+    #api_followers('alberto_lm')
     #api_followers_screen_names(ego_screenname='alberto_lm')
-    #graph('alberto_lm')
+    graph('alberto_lm')
