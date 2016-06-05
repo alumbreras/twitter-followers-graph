@@ -10,8 +10,8 @@ from tweepy import TweepError
 from xml.sax.saxutils import escape
 
 # Use your own 
-CONSUMER_KEY = '7it3IkPFI4RNIGhIci5w'
-CONSUMER_SECRET = 'zGUE2bTucHcNn5IxFNyBP8dN2EvbrMtij5xuWHqcW0'
+CONSUMER_KEY = ''
+CONSUMER_SECRET = ''
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 api = tweepy.API(auth)
