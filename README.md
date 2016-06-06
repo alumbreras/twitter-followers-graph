@@ -30,10 +30,20 @@ Builds a graph file (graphML format) form the information stored in files (follo
 
 ### Once in Gephi
 
-Once in Gephi, I recommend removing the ego 'user' since it provides no information at all (every one is connected to it).
+Once in Gephi, I recommend the following steps (I assume you know how to do this):
 
-Then you can run, for instance, the Force Atlas 2 layout algorithm. 
+*  Remove the ego 'user' since it provides no information at all (every one is connected to it).
 
-And then detect communities, make vertices sizes proportional to degree,  colors according to communities, and whatever you like.
+* Detect connected components. Remove nodes that are not in the biggest component. If they are in components of size 1, they may be bots. If they are in small components, they might be family, or isolated some group of people not related to the other ones. 
+
+* For the vertices, show only  the 'name' attribute.
+
+* Run the Force Atlas 2 layout algorithm. Then use expand, rotate, adjust labels to minimize overlapping.
+
+* Detect modularity and PageRank. Make colors of vertices correspond to their modularity group. Make sizes of vertices correspond to PageRank.
+
+* More fine-tunning until you like the result.
 
 Have fun!
+
+![ego alberto_lm](../outputs/alberto_lm.png) 

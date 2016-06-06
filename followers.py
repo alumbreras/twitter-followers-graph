@@ -10,9 +10,11 @@ from tweepy import TweepError
 from xml.sax.saxutils import escape
 
 # Use your own 
-CONSUMER_KEY = ''
-CONSUMER_SECRET = ''
+#CONSUMER_KEY = ''
+#CONSUMER_SECRET = ''
 
+CONSUMER_KEY = '7it3IkPFI4RNIGhIci5w'
+CONSUMER_SECRET = 'zGUE2bTucHcNn5IxFNyBP8dN2EvbrMtij5xuWHqcW0'
 
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -178,7 +180,7 @@ def graph(ego_screenname):
         # Add edges to ego and between ego followers
         for f_id, ff_ids in all_followers.iteritems():
             for ff_id in set(ff_ids).intersection(neighbourhood):
-                out.write("<edge id='edge%d' source='%d' target='%d' />\n" % (edge_id, f_id, ff_id))
+                out.write("<edge id='edge%d' source='%d' target='%d' />\n" % (edge_id, ff_id, f_id))
                 edge_id += 1
         
         # Close graphml object
