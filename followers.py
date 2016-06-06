@@ -2,6 +2,7 @@
 # The egonet is made of all its followers and the edges between followers
 # author: Alberto Lumbreras
 ###########################################################################
+import argparse
 import csv
 import os
 import time
@@ -188,6 +189,21 @@ def graph(ego_screenname):
         out.write("</graph></graphml>")
 
 if __name__ == '__main__':
-    api_followers('isctoulouse')
-    #api_followers_screen_names(ego_screenname='isctoulouse')
-    #graph('isctoulouse')
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--screen_name", required=True, help="Screen name of twitter user")
+    parser.add_argument("-f", "--function", required=True, help="Function to execute",
+                        choices=['api_followers', 'api_screen_name', 'graph'])
+    
+    args = vars(parser.parse_args())
+    screen_name = args['screen_name']
+    function = args['function']    
+    
+    if function == 'api_followers':
+        api_followers(screen_name)
+        
+    if function == 'api_screen_name': 
+        api_followers_screen_names(ego_screenname=screen_name)
+
+    if function == 'graph':    
+        graph(screen_name)
