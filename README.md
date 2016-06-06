@@ -26,7 +26,7 @@ If the screen name of a user is not fetched, the `graph()` function will assign 
 
 This is very cheap in terms of API calls since we can retrieve 100 screen names per call.
 
-*  **python -u johnsnow -f graph**
+*  **python followers.py -u johnsnow -f graph**
 
 Builds a graph file (graphML format) form the information stored in files (followers and screen names). The graph can be directly opened by Gephi.
 
