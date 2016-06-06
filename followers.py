@@ -193,16 +193,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--screen_name", required=True, help="Screen name of twitter user")
     parser.add_argument("-f", "--function", required=True, help="Function to execute",
-                        choices=['api_followers', 'api_screen_name', 'graph'])
+                        choices=['api_followers', 'api_screen_names', 'graph'])
     
     args = vars(parser.parse_args())
-    screen_name = args['screen_name']
+    screen_name = args['screen_names']
     function = args['function']    
     
     if function == 'api_followers':
         api_followers(screen_name)
         
-    if function == 'api_screen_name': 
+    if function == 'api_screen_names': 
         api_followers_screen_names(ego_screenname=screen_name)
 
     if function == 'graph':    
