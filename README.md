@@ -46,4 +46,4 @@ Once in Gephi, I recommend the following steps (I assume you know how to do this
 
 Have fun!
 
-![ego alberto_lm](../outputs/alberto_lm.png) 
+![ego alberto_lm](https://github.com/alumbreras/twitter-followers-graph/blob/master/outputs/alberto_lm.png) 
