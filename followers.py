@@ -10,11 +10,10 @@ from tweepy import TweepError
 from xml.sax.saxutils import escape
 
 # Use your own 
-#CONSUMER_KEY = ''
-#CONSUMER_SECRET = ''
+CONSUMER_KEY = ''
+CONSUMER_SECRET = ''
 
-CONSUMER_KEY = '7it3IkPFI4RNIGhIci5w'
-CONSUMER_SECRET = 'zGUE2bTucHcNn5IxFNyBP8dN2EvbrMtij5xuWHqcW0'
+
 
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -187,6 +186,6 @@ def graph(ego_screenname):
         out.write("</graph></graphml>")
 
 if __name__ == '__main__':
-    #api_followers('alberto_lm')
-    #api_followers_screen_names(ego_screenname='alberto_lm')
+    api_followers('alberto_lm')
+    api_followers_screen_names(ego_screenname='alberto_lm')
     graph('alberto_lm')
