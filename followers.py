@@ -6,15 +6,17 @@ import csv
 import os
 import time
 import tweepy
+import yaml
 from tweepy import TweepError
 from xml.sax.saxutils import escape
 
-# Use your own 
-CONSUMER_KEY = ''
-CONSUMER_SECRET = ''
-
-
-
+# Read keys from file that contains
+# CONSUMER_KEY: 6it3IkPFI4RNIGhIci1w
+# CONSUMER_SECRET: zGUE1bTucHcNn5IxFNyBP8dN2EvbrMtij5xuWHqcW0
+with open('config.yml', 'r') as f:
+    doc = yaml.load(f)
+    CONSUMER_KEY = doc["CONSUMER_KEY"]
+    CONSUMER_SECRET = doc["CONSUMER_SECRET"]
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 api = tweepy.API(auth)
@@ -186,6 +188,6 @@ def graph(ego_screenname):
         out.write("</graph></graphml>")
 
 if __name__ == '__main__':
-    api_followers('alberto_lm')
-    api_followers_screen_names(ego_screenname='alberto_lm')
-    graph('alberto_lm')
+    api_followers('isctoulouse')
+    #api_followers_screen_names(ego_screenname='isctoulouse')
+    #graph('isctoulouse')
