@@ -10,7 +10,7 @@ You are supposed to have a config.yml file in the same directory, with your keys
 
 Then there are three functions to be executed secuentially:
 
-*  **    python followers.py -u johnsnow -f api_followers**
+*  **python followers.py -u johnsnow -f api_followers**
 
 Fetches the followers of user and their followers as well. Store them into files. By storing them into files we can, at different executions, check whether the user had already been fetched and avoid unnecessary API calls. 
 
@@ -18,7 +18,7 @@ Due to the API rate limitations, we can only fetch the followers of 15 users in 
 
 Nonetheless, the script can be stoped at any time and the final graph will contain only those followers whose followers have been fetched.
 
-* **    python followers.py -u johnsnow -f api_screen_names**
+* **python followers.py -u johnsnow -f api_screen_names**
 
 Fetches the screen names of the followers and store them into files. It allows the final graph to contain the screen names and therefore Gephi can plot them instead of the user ids. 
 
