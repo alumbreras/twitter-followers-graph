@@ -168,7 +168,7 @@ def graph(ego_screenname):
         # if we don't have its screen_name, use its user id as name
         out.write("<node id='%d'><data key='name'>%s</data></node>\n" % (ego, escape(screen_names[ego])))
         for f_id in all_followers[ego]:
-                if screen_names.has_key(f_id):
+                if f_id in screen_names:
                     screen_name =  escape(screen_names[f_id])
                 else:
                     screen_name =  f_id                
@@ -180,7 +180,7 @@ def graph(ego_screenname):
         neighbourhood.append(ego)
         
         # Add edges to ego and between ego followers
-        for f_id, ff_ids in all_followers.iteritems():
+        for f_id, ff_ids in all_followers.items():
             for ff_id in set(ff_ids).intersection(neighbourhood):
                 out.write("<edge id='edge%d' source='%d' target='%d' />\n" % (edge_id, ff_id, f_id))
                 edge_id += 1
