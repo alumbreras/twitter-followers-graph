@@ -46,18 +46,18 @@ def api_followers(ego_screenname):
     with open(os.path.join('followers', str(ego)), 'w') as f:
         csv.writer(f).writerow(ego_followers)
     
-    print "Ego followers:", len(ego_followers)
+    print("Ego followers:", len(ego_followers))
     # Followers ids of ego followers
     # sleep for a while when we reach the API limit
     while(True):
         for u in ego_followers:
-            print "User: " + str(u)
+            print("User: ", str(u))
             fname = os.path.join("followers", str(u))
     
             # If user is already tracked, get their followers from file
             if os.path.isfile(fname):
                 with open(fname, 'r') as f:
-                    print str(u) + " had already been fetched\n"
+                    print(str(u) + " had already been fetched\n")
     
             # otherwise use the API
             else:
@@ -68,7 +68,7 @@ def api_followers(ego_screenname):
                     with open(fname, 'w') as f:                
                         csv.writer(f).writerow(api.followers_ids(u))
                 except TweepError as e:
-                    print e
+                    print(e)
                     time.sleep(60)
         break
 
@@ -76,12 +76,12 @@ def api_followers(ego_screenname):
 def api_followers_screen_names(ego_screenname):
     """Get the screen name of every ego follower"""
     ego = api.get_user(ego_screenname).id
-    print "Getting screen names for followers of", ego_screenname
+    print("Getting screen names for followers of", ego_screenname)
         
     # Read followers from file
     fname = os.path.join("followers", str(ego))
     if not os.path.isfile(fname):
-        print "User not tracked yet"
+        print("User not tracked yet")
         return
     
     with open(fname, 'r') as f:
@@ -96,17 +96,17 @@ def api_followers_screen_names(ego_screenname):
         try:
             users_batch = api.lookup_users(followers[batch_start:batch_end])
             for u in users_batch:
-                print u.screen_name
+                print(u.screen_name)
                 with open(os.path.join('screen_names', str(u.id)), 'w') as f:
                     f.write(u.screen_name)
         except TweepError as e:
-            print e
+            print(e)
             time.sleep(60)
             
         batch_start += 100
         batch_end = min(batch_end+100, n_users) 
 
-    print "Number of followers:", n_users - 1
+    print("Number of followers:", n_users - 1)
 
 def graph(ego_screenname):
     """Build the a graph of the egonet of ego"""
@@ -146,7 +146,7 @@ def graph(ego_screenname):
             pass # screen name of this user not yet fetched
             
     # Create graphML
-    print "Writing graph..."
+    print("Writing graph...")
     path = './outputs/'
     if not os.path.exists(path):
         os.makedirs(path)
