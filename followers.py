@@ -196,7 +196,7 @@ if __name__ == '__main__':
                         choices=['api_followers', 'api_screen_names', 'graph'])
     
     args = vars(parser.parse_args())
-    screen_name = args['screen_names']
+    screen_name = args['screen_name']
     function = args['function']    
     
     if function == 'api_followers':
