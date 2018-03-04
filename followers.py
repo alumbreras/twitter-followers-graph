@@ -216,26 +216,33 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--screen_name", required=True, help="Screen name of twitter user")
     parser.add_argument("-f", "--function", required=True, help="Function to execute",
-                        choices=['api_followers', 'api_followees', 'api_followers_names', 'api_followees_names', 'graph_followers', 'graph_followees'])
+                        choices=['api_followers', 'api_followees', 'api_followers_names', 'api_followees_names', 'api_followers_graph', 'api_followees_graph'])
     
     args = vars(parser.parse_args())
     screen_name = args['screen_name']
-    function = args['function']    
-    
-    if function == 'api_followers':
-        api_neighbours(screen_name, direction = "in")
+    function = args['function']
 
-    if function == 'api_followees':
-        api_neighbours(screen_name, direction = "out")
-        
-    if function == 'api_followers_names': 
-        api_neighbours_screen_names(ego_screenname=screen_name, direction = "in")
+    while(True): 
+        try:
+            if function == 'api_followers':
+                api_neighbours(screen_name, direction = "in")
+            
+            if function == 'api_followees':
+                api_neighbours(screen_name, direction = "out")
+                
+            if function == 'api_followers_names': 
+                api_neighbours_screen_names(ego_screenname=screen_name, direction = "in")
 
-    if function == 'api_followees_names': 
-        api_neighbours_screen_names(ego_screenname=screen_name, direction = "out")
+            if function == 'api_followees_names': 
+                api_neighbours_screen_names(ego_screenname=screen_name, direction = "out")
+            
+            break
+        except TweepError as e:
+            print(e)
+            time.sleep(60)
 
-    if function == 'graph_followers':    
+    if function == 'api_followers_graph':    
         graph(screen_name, direction = "in")
 
-    if function == 'graph_followees':    
+    if function == 'api_followees_graph':    
         graph(screen_name, direction = "out")
