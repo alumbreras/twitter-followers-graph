@@ -184,18 +184,18 @@ def graph(ego_screenname, direction="in"):
         \n""")
         
         # General specifications
-        out.write("""<key id="name" for="node" attr.name="name" attr.type="string" />\n""")
+        out.write("""<key id="label" for="node" attr.name="label" attr.type="string" />\n""")
         out.write("""<graph edgedefault="directed">\n\n""")
     
         # Add nodes (ego plus one node for each neighbours)
         # if we don't have its screen_name, use its user id as name
-        out.write("<node id='%d'><data key='name'>%s</data></node>\n" % (ego, escape(screen_names[ego])))
+        out.write("<node id='%d'><data key='label'>%s</data></node>\n" % (ego, escape(screen_names[ego])))
         for f_id in all_neighbours[ego]:
                 if f_id in screen_names:
                     screen_name =  escape(screen_names[f_id])
                 else:
                     screen_name =  f_id                
-                out.write("<node id='%d'><data key='name'>%s</data></node>\n" % (f_id, screen_name))
+                out.write("<node id='%d'><data key='label'>%s</data></node>\n" % (f_id, screen_name))
          
         edge_id = 0
         
@@ -205,7 +205,10 @@ def graph(ego_screenname, direction="in"):
         # Add edges to ego and between ego neighbours
         for f_id, ff_ids in all_neighbours.items():
             for ff_id in set(ff_ids).intersection(neighbourhood):
-                out.write("<edge id='edge%d' source='%d' target='%d' />\n" % (edge_id, ff_id, f_id))
+                if(direction == "in"):
+                    out.write("<edge id='edge%d' source='%d' target='%d' />\n" % (edge_id, ff_id, f_id))
+                else:
+                    out.write("<edge id='edge%d' source='%d' target='%d' />\n" % (edge_id, f_id, ff_id))                    
                 edge_id += 1
         
         # Close graphml object
