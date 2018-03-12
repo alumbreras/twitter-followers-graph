@@ -13,7 +13,7 @@ import json
 from tweepy import TweepError
 from matplotlib import pylab as plt
 from collections import Counter
-
+import utils
 
 with open('config_keywords.yml', 'r') as f:
     doc = yaml.load(f)
@@ -45,34 +45,6 @@ PATHS = {"in": "./followers/",
          "names": "./screen_names/",
          "outputs": "./outputs/"}
 
-def api_neighbours_ids(user, direction="in"):
-    if direction == "in":
-        neighbours_ids = api.followers_ids(user)
-
-    else:
-        neighbours_ids = api.friends_ids(user)
-
-    return neighbours_ids
-
-def fetch_neighbours(userid, direction="in"):
-    fname = os.path.join(PATHS[direction], str(userid))
-
-    # If user is already tracked, get their followers from file
-    if os.path.isfile(fname):
-        print("User had already been fetched\n")
-
-    # otherwise use the API
-    else:
-        try:
-            # https://dev.twitter.com/rest/reference/get/followers/ids
-            # 15 calls / 15 mins
-            with open(fname, 'w') as f:
-                neighbours = api_neighbours_ids(userid, direction)                
-                csv.writer(f).writerow(neighbours)
-        except TweepError as e:
-            print(e)
-            if e == "Not authorized.":
-                writer.writerow("")
 
 def get_participants(keyword):
     participants = {}
@@ -109,13 +81,12 @@ def api_participans_neighbours(keyword):
             f.write(participants[uid])
 
 
-#################################################
-# Create edge list using the followers directory
-# where we downloaded the list of followers ids 
-# of every user
-#################################################
 def build_graph(keyword):
-
+    """
+    Create edge list using the followers directory
+    where we downloaded the list of followers ids 
+    of every user
+    """
     participants = get_participants(keyword)
     participants_ids = participants.keys()
 
@@ -123,30 +94,24 @@ def build_graph(keyword):
     # the list of followers
     tracked_participants = []
     for uid in participants_ids:
-        fname = os.path.join("followers", str(uid))
+        fname = os.path.join(PATHS['in'], str(uid))
         if os.path.isfile(fname):
             tracked_participants.append(uid)
 
     # Create a list of edges 
-    # and a list of vertices       
     edges = []
-    vertices = []
     for i, uid in enumerate(tracked_participants):
         print(i)
-        fname = os.path.join("followers", str(uid))
+        fname = os.path.join(PATHS['in'], str(uid))
         
-        # insert it in the list of vertices
-        vertices.append((participants[uid], uid))
-        
-        # create its edges
         with open(fname, 'r') as f:
             print("user", participants[uid])
             line = f.readline()
             followers = line.split(',')
             if followers[0] == '':
                 continue
-            print(len(followers))
-            count = 0 # number of followers that participated in the hashtag
+
+            # create and edge from each follower
             for fid in followers:
                 try:
                     fid = int(fid)
@@ -154,32 +119,48 @@ def build_graph(keyword):
                     print(e)
                     break
                 if fid in tracked_participants:
-                    count += 1
                     edges.append((participants[fid], participants[uid]))
-            print(count)
 
 
-    # Copy to files
-    fname = os.path.join(PATHS["outputs"], 'edges.csv')
+    # Save to file
+    fname = os.path.join(PATHS["outputs"], os.path.join(PATHS['output'], 'edges' + keyword + '.csv'))
     with open(fname, 'w') as f:
         writer = csv.writer(f)
         for e in edges:
             writer.writerow(e)
         f.close()
-        
-    fname = os.path.join(PATHS["outputs"], 'vertices.csv')
-    with open(fname, 'w') as f:
-        writer = csv.writer(f)
-        for v in vertices:
-            writer.writerow(v)
-        f.close()
+
+
+def build_dataset_participations():
+    """ Creates a dataset will all participations """
+
+    def get_participants(keyword):
+        participants = {}
+        with open('tracked/' + keyword + ".json", 'r') as f:
+            data = json.load(f)
+            for entry in data:
+                if entry["user_id"] not in participants:
+                    participants[entry["user_id"]] = entry['user']
+
+        return participants
+
+
+    filenames = listdir(PATHS["tracked"])
+    with open(os.path.join(PATHS['outputs'], 'participations.csv'), 'w') as fout:
+        csvwriter = csv.writer(fout, delimiter=',')
+        for i, f in enumerate(filenames):
+            print(f)
+            participants = get_participants(f[:-5])
+            for p in participants.values():
+                csvwriter.writerow([p, i, 1]) 
+
 
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("-k", "--keyword", required=True, help="A tracked keyword")
+    parser.add_argument("-k", "--keyword", required=False, help="A tracked keyword")
     parser.add_argument("-f", "--function", required=True, help="Function to execute",
-                        choices=['api_neighbours', 'api_names', 'api_graph'])
+                        choices=['api_neighbours', 'build_graph', 'build_dataset_participations'])
     
     args = vars(parser.parse_args())
     keyword = args['keyword']
@@ -193,6 +174,9 @@ if __name__ == '__main__':
 
             if function == 'api_graph': 
                 build_graph(keyword)
+
+            if function == 'dataset_participations': 
+                build_dataset_participations()
             
             break
         except TweepError as e:

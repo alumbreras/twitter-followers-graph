@@ -6,10 +6,17 @@ library(stringr)
 
 # Plot a matrix of user similarity
 
-filename <- '../outputs/similarities.csv'
-filename_users <- '../diputados.txt' 
 
+
+
+filename <- '../outputs/adjacency.csv'
 df <- read.table(filename, sep = ',')
+names(df) <- c("from", "to")
+df$similarity <- 1
+M <- acast(df, from~to, fill = 0)
+
+filename <- '../outputs/similarities.csv'
+df <- read.table(filename, sep = ',', header = TRUE)
 names(df) <- c("from", "to", "similarity")
 M <- acast(df, from~to)
 
@@ -34,7 +41,7 @@ for(user in users){
   fname <- paste0('../followers/', uid)
   if(file.exists(fname)){
     followers <- scan(fname, sep = ',', what = character())
-    if(length(followers)>100){
+    if(length(followers)>4000){
       popular_users <- c(popular_users, user)
     }
   }

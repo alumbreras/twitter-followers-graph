@@ -17,29 +17,6 @@ api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, 
 
 
 
-def screen_names(users):
-    """Get the screen name of ego's neighbours"""
-    
-    # Get screen_name of each neighbour and store in into a file    
-    n_users = len(users) + 1
-    batch_start = 0
-    batch_end = min(100, n_users)
-    while(batch_start < n_users):
-        try:
-        	users_batch = api.lookup_users(screen_names=users[batch_start:batch_end])
-        	for u in users_batch:
-        		print(u.screen_name, u.id)
-        		with open(os.path.join('screen_names', str(u.id)), 'w') as f:
-        			f.write(u.screen_name)
-        except TweepError as e:
-        	print(e)
-        	time.sleep(60)
-
-        batch_start += 100
-        batch_end = min(batch_end+100, n_users)
-    print("Number of neighbours:", n_users - 1)
-
-
 def download_list(user, lista, file):
 	print(lista, "api...")
 	users  = tweepy.Cursor(api.list_members, user, lista).items()
