@@ -1,3 +1,6 @@
+Twitter Egonets
+=====
+
 ### Description
 Fetch the followers of a user and the following relationship between them. Create a graph file with this graph.
 
@@ -58,3 +61,28 @@ Once in Gephi, I recommend the following steps (I assume you know how to do this
 Have fun!
 
 ![ego alberto_lm](https://github.com/alumbreras/twitter-followers-graph/blob/master/outputs/alberto_lm.png) 
+
+
+
+
+
+Twitter Keyword Communities
+=====
+
+Reproduces the social network of the users who tweeted a given keyword
+
+A typical use case: :
+
+* Use `stream_tracker` to track the twitter stream and get tweets containing the keyword.
+   *  output: `tracked/keyword.txt`
+
+* Use `participation` to query the API to download the followers of participants and
+to create a the social graph to be read by Gephi, R, etc
+   *  input: `tracked/keyword.json` (to get the participants)
+   *  input: `followers/` (to get the relationship between participants)
+   *  output: `followers/participantid` (one file per participant)
+   *  output: `outputs/edges.csv` (from, to) and `vertices.csv` (screen_name, entry_time).
+
+
+JSON files should be properly closed by hand (leading and ending brackets)
+
