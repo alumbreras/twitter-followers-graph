@@ -3,6 +3,9 @@ library(ggplot2)
 library(gplots)
 library(dplyr)
 library(stringr)
+#TODO: show the ideal blocks, nowing each member's party.
+# members sorted by party so that we can see which blocks are more dense
+# and with less leaks to other blocks
 
 # Plot a matrix of user similarity
 
@@ -15,7 +18,7 @@ names(df) <- c("from", "to")
 df$similarity <- 1
 M <- acast(df, from~to, fill = 0)
 
-filename <- '../outputs/similarities.csv'
+filename <- '../outputs/similarity_diputados_in.csv'
 df <- read.table(filename, sep = ',', header = TRUE)
 names(df) <- c("from", "to", "similarity")
 M <- acast(df, from~to)
@@ -41,7 +44,7 @@ for(user in users){
   fname <- paste0('../followers/', uid)
   if(file.exists(fname)){
     followers <- scan(fname, sep = ',', what = character())
-    if(length(followers)>4000){
+    if(length(followers)>4500){
       popular_users <- c(popular_users, user)
     }
   }

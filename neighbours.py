@@ -68,10 +68,12 @@ if __name__ == '__main__':
 
 	        if(function == 'make_similarity'):
 	        	print("Creating similarity matrix")
-	        	make_similarity_matrix(users, direction = direction)
+	        	fout = 'similarity' + '_' + file.split('.')[0] + '_' + direction + '.csv'
+	        	make_similarity_matrix(users, direction = direction, file = fout)
 
 	        if(function == 'make_adjacency'):
 	        	print("Creating adjacency matrix")
+	        	fout = 'adjacency' + '-' + file.split('.')[0] + '_' + direction + '.csv'
 	        	make_adjacency_matrix(users, direction = direction)
         	
         	break
