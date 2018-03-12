@@ -2,3 +2,4 @@
 *.yml
 *.yaml
 *outputs/*
+*__pycache__*
