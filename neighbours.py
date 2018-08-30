@@ -10,6 +10,7 @@ import os
 import csv
 import time
 from tweepy import TweepError
+import utils
 from utils import fetch_neighbours, make_similarity_matrix, make_adjacency_matrix
 
 with open('config_neighbours.yml', 'r') as f:
@@ -36,11 +37,14 @@ if __name__ == '__main__':
     	 				choices=['followers', 'followees'])
     parser.add_argument("-f", "--function", required=True, help="Function to execute", 
 		choices=['fetch', 'make_similarity', 'make_adjacency'])
+    parser.add_argument("--force", action='store_true', required=False, help="Forces re-fetching of users")
+
 
     args = vars(parser.parse_args())
     file = args['list']
     direction = args['direction']
     function = args['function']
+    force = args['force']
 
     if (direction == 'followers'):
     	direction = 'in'
@@ -59,12 +63,14 @@ if __name__ == '__main__':
         	if(function == 'fetch'):
         		# Get neighbours of each user in the list
         		for i, user in enumerate(users):
-        			print(i, user)
-        			userid = api.get_user(user).id
-        			fetch_neighbours(userid, api, direction=direction)
-        			# Save the id-screen_name pair since we have it already
-        			with open(os.path.join('screen_names', str(userid)), 'w') as f:
-        				f.write(user)
+        			print('\n', i, user)
+        			user_obj = api.get_user(user) 
+        			n = fetch_neighbours(user_obj.id, api, direction=direction, force=force)
+        			print("neighbours: ", n)
+
+        			# Save user info and the id-screen_name pair since we have it already
+        			utils.save_user(user_obj)
+        			utils.save_screen_name(user_obj.id, user)
 
 	        if(function == 'make_similarity'):
 	        	print("Creating similarity matrix")
@@ -74,7 +80,7 @@ if __name__ == '__main__':
 	        if(function == 'make_adjacency'):
 	        	print("Creating adjacency matrix")
 	        	fout = 'adjacency' + '-' + file.split('.')[0] + '_' + direction + '.csv'
-	        	make_adjacency_matrix(users, direction = direction)
+	        	make_adjacency_matrix(users, direction = direction, file = fout)
         	
         	break
 

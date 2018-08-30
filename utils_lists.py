@@ -37,10 +37,5 @@ if __name__ == '__main__':
 	file = args['file']
 	if file == None:
 		file = lista
-	
-	usernames = []
-	with open(file, 'r') as f:
-		csvreader = csv.reader(f, delimiter=' ')
-		for user in csvreader:
-			usernames.append(user[0])
-	screen_names(usernames)
+
+	download_list(user, lista, file)

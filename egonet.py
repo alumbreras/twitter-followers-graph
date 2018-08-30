@@ -45,7 +45,7 @@ PATHS = {"in": "./followers/",
          "outputs": "./outputs/"}
 
 
-def ego_neighbourhood(ego_screenname, direction = "in"):
+def ego_neighbourhood(ego_screenname, direction = "in", force = False):
     """ Get the neighbours of ego and the neighbours of its neighbours
         Store everyting in files
     """
@@ -58,7 +58,8 @@ def ego_neighbourhood(ego_screenname, direction = "in"):
     for i, userid in enumerate(neighbours):
         print("Processed:" + str(i) + "/" + str(len(neighbours)))
         print("User: ", str(userid))
-        fetch_neighbours(userid, api, direction = direction)
+        n = fetch_neighbours(userid, api, direction = direction, force = force)
+        print("neighbours: ", n)
 
     # Fetch screen names
     screen_names(neighbours, api)
@@ -71,18 +72,20 @@ if __name__ == '__main__':
     parser.add_argument("-u", "--user", required=True, help="Screen name of twitter user")
     parser.add_argument("-f", "--function", required=True, help="Function to execute",
                         choices=['followers', 'followees', 'followers_graph', 'followees_graph'])
-    
+    parser.add_argument("--force", type=bool, required=False, help="Forces re-fetching of users")
+
     args = vars(parser.parse_args())
     user = args['user']
     function = args['function']
+    force = args['force']
 
     while(True): 
         try:
             if function == 'followers':
-                ego_neighbourhood(user, direction = "in")
+                ego_neighbourhood(user, direction = "in", force = force)
             
             if function == 'followees':
-                ego_neighbourhood(user, direction = "out")
+                ego_neighbourhood(user, direction = "out", force = force)
                 
             break
         except TweepError as e:

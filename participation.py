@@ -89,7 +89,7 @@ def build_graph(keyword):
     """
     participants = get_participants(keyword)
     participants_ids = participants.keys()
-
+    print("hola")
     # Only consider participants for whom we know
     # the list of followers
     tracked_participants = []
@@ -123,7 +123,8 @@ def build_graph(keyword):
 
 
     # Save to file
-    fname = os.path.join(PATHS["outputs"], os.path.join(PATHS['output'], 'edges' + keyword + '.csv'))
+    fname = os.path.join(PATHS['outputs'], 'edges' + keyword + '.csv')
+    print("Writing to file:", fname)
     with open(fname, 'w') as f:
         writer = csv.writer(f)
         for e in edges:
@@ -172,7 +173,7 @@ if __name__ == '__main__':
                 api_participans_neighbours(keyword)
                 build_graph(keyword)
 
-            if function == 'api_graph': 
+            if function == 'build_graph': 
                 build_graph(keyword)
 
             if function == 'dataset_participations': 

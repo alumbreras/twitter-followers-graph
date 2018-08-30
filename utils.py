@@ -18,65 +18,105 @@ from collections import Counter
 
 
 PATHS = {"in": "./followers/",
-         "out": "./followees/",
-         "names": "./screen_names/",
-         "tracked": "./tracked/",
-         "outputs": "./outputs/"}
+		 "out": "./followees/",
+		 "names": "./screen_names/",
+		 "users": "./users/",
+		 "tracked": "./tracked/",
+		 "outputs": "./outputs/"}
 
+
+path = './users/'
+if not os.path.exists(path):
+    os.makedirs(path)
 
 ##################################################
 # Functions that fetch neighbours and screen names
 ##################################################
 		
 def api_neighbours_ids(user, api, direction="in"):
-    if direction == "in":
-        neighbours_ids = api.followers_ids(user)
 
-    else:
-        neighbours_ids = api.friends_ids(user)
+	if direction == "in":
+		#neighbours_ids = api.followers_ids(user)
+		neighbours_ids = tweepy.Cursor(api.followers_ids, id=user, count=5000).items()
 
-    return neighbours_ids
+	else:
+		#neighbours_ids = api.friends_ids(user)
+		neighbours_ids = tweepy.Cursor(api.friends_ids, id=user, count=5000).items()
 
-def fetch_neighbours(userid, api, direction="in"):
-    fname = os.path.join(PATHS[direction], str(userid))
+	neighbours_ids = [n for n in neighbours_ids]
+	
+	# for pages
+	#for n in neighbours_ids:
+	#	neighbours_ids.extend(n)
+	return neighbours_ids
+   
 
-    # If user is already tracked, get their followers from file
-    if os.path.isfile(fname):
-        print("User had already been fetched\n")
+def fetch_neighbours(userid, api, direction="in", force=False):
+	fname = os.path.join(PATHS[direction], str(userid))
+	neighbours = []
 
-    # otherwise use the API
-    else:
-        try:
-            with open(fname, 'w') as f:
-                neighbours = api_neighbours_ids(userid, api, direction)                
-                csv.writer(f).writerow(neighbours)
-        except TweepError as e:
-            print(e)
-            if e == "Not authorized.":
-                writer.writerow("")
+	# If user is already tracked, get their followers from file
+	if(not force):
+		if os.path.isfile(fname):
+			print("User had already been fetched")
+			return 0
+
+	# otherwise use the API
+	try:
+		with open(fname, 'w') as f:
+			print("fetching neighbours")
+			neighbours = api_neighbours_ids(userid, api, direction)
+			csv.writer(f).writerow(neighbours)
+
+	except TweepError as e:
+		print(e)
+		if e == "Not authorized.":
+			writer.writerow('')
+
+	return len(neighbours)
 
 def screen_names(users, api):
-    """Get the screen name of ego's neighbours"""
-    
-    # Get screen_name of each neighbour and store in into a file    
-    n_users = len(users) + 1
-    batch_start = 0
-    batch_end = min(100, n_users)
-    while(batch_start < n_users):
-        try:
-        	#users_batch = api.lookup_users(screen_names=users[batch_start:batch_end])
-        	users_batch = api.lookup_users(users[batch_start:batch_end])
-        	for u in users_batch:
-        		print(u.screen_name, u.id)
-        		with open(os.path.join('screen_names', str(u.id)), 'w') as f:
-        			f.write(u.screen_name)
-        except TweepError as e:
-        	print(e)
-        	time.sleep(60)
+	"""Get the screen name of users"""
+	
+	# Get screen_name of each neighbour and store in into a file    
+	n_users = len(users) + 1
+	batch_start = 0
+	batch_end = min(100, n_users)
+	while(batch_start < n_users):
+		try:
+			#users_batch = api.lookup_users(screen_names=users[batch_start:batch_end])
+			users_batch = api.lookup_users(users[batch_start:batch_end])
+			for u in users_batch:
+				print(u.screen_name, u.id)
+				with open(os.path.join('screen_names', str(u.id)), 'w') as f:
+					f.write(u.screen_name)
+		except TweepError as e:
+			print(e)
+			time.sleep(60)
 
-        batch_start += 100
-        batch_end = min(batch_end+100, n_users)
+		batch_start += 100
+		batch_end = min(batch_end+100, n_users)
 
+def save_user(user):
+	user_info = {}
+	user_info['screen_name'] 	  = user.screen_name
+	user_info['name'] 		 	  = user.name
+	user_info['description'] 	  = user.description
+	user_info['url'] 		 	  = user.url
+	user_info['location'] 	 	  = user.location
+	user_info['created_at']  	  = user.created_at
+	user_info['statuses_count']   = user.statuses_count
+	user_info['followers_count']  = user.followers_count
+	user_info['friends_count'] 	  = user.friends_count
+	user_info['favourites_count'] = user.favourites_count
+
+	fname = user.screen_name + '.yml'
+	with open(os.path.join(PATHS['users'], user.screen_name + '.yml'), 'w') as f:
+		yaml.dump(user_info, f, default_flow_style=False)
+
+def save_screen_name(userid, screen_name):
+	with open(os.path.join(PATHS['names'], str(userid)), 'w') as f:
+		f.write(screen_name)
 
 ###############################################
 # Functions that create the final datasets
@@ -156,10 +196,11 @@ def make_adjacency_matrix(users,  direction="out", file = "adjacency.csv"):
 	# Create a dictionary with neighbours of each user
 	neighbours = {}
 	try:
-		for uid in usernames:
+		for i, uid in enumerate(usernames):
 			fname = os.path.join(PATHS[direction], str(uid))
 			with open(fname, 'r') as f:
 				neighbours[uid] = [int(id) for line in csv.reader(f) for id in line]
+			print(usernames[uid], direction, len(neighbours[uid]))
 	except FileNotFoundError as e:
 		print(e)
 		print("WARNING: Cannot create the full adjacency because some neighbourhoods are missing")
@@ -179,86 +220,86 @@ def make_adjacency_matrix(users,  direction="out", file = "adjacency.csv"):
 
 
 def graph_ego(ego_screenname, api, direction="in"):
-    """Build the a graph of the egonet of ego in Gephi format"""
+	"""Build the a graph of the egonet of ego in Gephi format"""
 
-    
-    ego = api.get_user(ego_screenname).id
-    
-    all_neighbours = {}
-    screen_names = {}
+	
+	ego = api.get_user(ego_screenname).id
+	
+	all_neighbours = {}
+	screen_names = {}
 
-    # Read ego_alters from file    
-    with open(os.path.join(PATHS[direction], str(ego)), 'r') as f:
-        ego_neighbours = [int(id) for line in csv.reader(f) for id in line]
+	# Read ego_alters from file    
+	with open(os.path.join(PATHS[direction], str(ego)), 'r') as f:
+		ego_neighbours = [int(id) for line in csv.reader(f) for id in line]
 
-    # A dictionary to store ego neighbours and neighbours of neighbours
-    # We can already fill it with the ego neighbours
-    all_neighbours = {}
-    all_neighbours[ego] = ego_neighbours
-    
-    # A dictionaty that will map ids to screen_names
-    # we can already fill it with the ego screen_name
-    screen_names = {}
-    screen_names[ego] = ego_screenname
-    
-    # Fill both dictionaries with information stored in files
-    for u in all_neighbours[ego]:
-        fname = os.path.join(PATHS[direction], str(u))
-        try:
-            with open(fname, 'r') as f:
-                all_neighbours[u] = [int(id) for line in csv.reader(f) for id in line]
-        except IOError:
-            pass # neighbours of this user not yet fetched
-            
-        fname = os.path.join('screen_names', str(u))
-        try:
-            with open(fname, 'r') as f:        
-                screen_names[u] = f.read()
-        except IOError:
-            pass # screen name of this user not yet fetched
-            
-    # Create graphML
-    print("Writing graph...")
-    path = './outputs/'
-    if not os.path.exists(path):
-        os.makedirs(path)
-    
-    with open(path + ego_screenname + "_" + direction + '.graphml', 'w') as out:
-        # header
-        out.write("""<?xml version="1.0" encoding="UTF-8"?>
-        <graphml xmlns="http://graphml.graphdrawing.org/xmlns"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
-        http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
-        \n""")
-        
-        # General specifications
-        out.write("""<key id="label" for="node" attr.name="label" attr.type="string" />\n""")
-        out.write("""<graph edgedefault="directed">\n\n""")
-    
-        # Add nodes (ego plus one node for each neighbours)
-        # if we don't have its screen_name, use its user id as name
-        out.write("<node id='%d'><data key='label'>%s</data></node>\n" % (ego, escape(screen_names[ego])))
-        for f_id in all_neighbours[ego]:
-                if f_id in screen_names:
-                    screen_name =  escape(screen_names[f_id])
-                else:
-                    screen_name =  f_id                
-                out.write("<node id='%d'><data key='label'>%s</data></node>\n" % (f_id, screen_name))
-         
-        edge_id = 0
-        
-        neighbourhood = all_neighbours[ego]
-        neighbourhood.append(ego)
-        
-        # Add edges to ego and between ego neighbours
-        for f_id, ff_ids in all_neighbours.items():
-            for ff_id in set(ff_ids).intersection(neighbourhood):
-                if(direction == "in"):
-                    out.write("<edge id='edge%d' source='%d' target='%d' />\n" % (edge_id, ff_id, f_id))
-                else:
-                    out.write("<edge id='edge%d' source='%d' target='%d' />\n" % (edge_id, f_id, ff_id))                    
-                edge_id += 1
-        
-        # Close graphml object
-        out.write("</graph></graphml>")
+	# A dictionary to store ego neighbours and neighbours of neighbours
+	# We can already fill it with the ego neighbours
+	all_neighbours = {}
+	all_neighbours[ego] = ego_neighbours
+	
+	# A dictionaty that will map ids to screen_names
+	# we can already fill it with the ego screen_name
+	screen_names = {}
+	screen_names[ego] = ego_screenname
+	
+	# Fill both dictionaries with information stored in files
+	for u in all_neighbours[ego]:
+		fname = os.path.join(PATHS[direction], str(u))
+		try:
+			with open(fname, 'r') as f:
+				all_neighbours[u] = [int(id) for line in csv.reader(f) for id in line]
+		except IOError:
+			pass # neighbours of this user not yet fetched
+			
+		fname = os.path.join('screen_names', str(u))
+		try:
+			with open(fname, 'r') as f:        
+				screen_names[u] = f.read()
+		except IOError:
+			pass # screen name of this user not yet fetched
+			
+	# Create graphML
+	print("Writing graph...")
+	path = './outputs/'
+	if not os.path.exists(path):
+		os.makedirs(path)
+	
+	with open(path + ego_screenname + "_" + direction + '.graphml', 'w') as out:
+		# header
+		out.write("""<?xml version="1.0" encoding="UTF-8"?>
+		<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+		http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+		\n""")
+		
+		# General specifications
+		out.write("""<key id="label" for="node" attr.name="label" attr.type="string" />\n""")
+		out.write("""<graph edgedefault="directed">\n\n""")
+	
+		# Add nodes (ego plus one node for each neighbours)
+		# if we don't have its screen_name, use its user id as name
+		out.write("<node id='%d'><data key='label'>%s</data></node>\n" % (ego, escape(screen_names[ego])))
+		for f_id in all_neighbours[ego]:
+				if f_id in screen_names:
+					screen_name =  escape(screen_names[f_id])
+				else:
+					screen_name =  f_id                
+				out.write("<node id='%d'><data key='label'>%s</data></node>\n" % (f_id, screen_name))
+		 
+		edge_id = 0
+		
+		neighbourhood = all_neighbours[ego]
+		neighbourhood.append(ego)
+		
+		# Add edges to ego and between ego neighbours
+		for f_id, ff_ids in all_neighbours.items():
+			for ff_id in set(ff_ids).intersection(neighbourhood):
+				if(direction == "in"):
+					out.write("<edge id='edge%d' source='%d' target='%d' />\n" % (edge_id, ff_id, f_id))
+				else:
+					out.write("<edge id='edge%d' source='%d' target='%d' />\n" % (edge_id, f_id, ff_id))                    
+				edge_id += 1
+		
+		# Close graphml object
+		out.write("</graph></graphml>")

@@ -36,14 +36,13 @@ class MyStreamListener(tweepy.StreamListener):
         user_id = status.user.id
         user_location = status.user.location
         text = status.text
-        print(text.encode('utf-8'))
+        print(text)
 
         #fname = keyword + '.txt'
         #line = "LINE:" + user + '\t' + str(user_id) + '\t' + str(epochs) + '\t' + text + '\n'
         #with codecs.open('./tracked/'+ fname, "a", "utf-8") as f:
         #    f.write(line)
             
-        #json
         fname = keyword + '.json'
         with codecs.open('./tracked/' + fname, "a", "utf-8") as f:
             data = {}
@@ -63,10 +62,6 @@ def stream_track(keywords):
     auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-
-    line = None
-
-    #keywords = ['#hashtag1', 'hashtag2']
     myStreamListener = MyStreamListener()
     myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
     myStream.filter(track=keywords, async=False) # block the main thread
@@ -79,7 +74,6 @@ if __name__ == '__main__':
     args = vars(parser.parse_args())
     global keywords 
     keywords = [args['keywords']]
-    #keywords = ["colombia", "venezuela"]
     print(keywords)
     stream_track(keywords)
 
