@@ -1,5 +1,4 @@
-Twitter Egonets
-=====
+## Egonets
 
 ### Description
 Fetch the followers of a user and the following relationship between them. Create a graph file with this graph.
@@ -64,10 +63,7 @@ Have fun!
 
 
 
-
-
-Twitter Keyword Communities
-=====
+## Keyword Communities
 
 Reproduces the social network of the users who tweeted a given keyword
 
