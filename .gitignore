@@ -3,3 +3,4 @@
 *.yaml
 *outputs/*
 *__pycache__*
+./tracked/#pensionesdignas.json
