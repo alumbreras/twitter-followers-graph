@@ -15,24 +15,20 @@ import json
 from tweepy import TweepError
 from matplotlib import pylab as plt
 from collections import Counter
-
+from config import PATHS
 
 ##################################################
 # Functions that fetch neighbours and screen names
 ##################################################
 		
 def api_neighbours_ids(user, api, direction="in"):
-
 	if direction == "in":
 		#neighbours_ids = api.followers_ids(user)
 		neighbours_ids = tweepy.Cursor(api.followers_ids, id=user, count=5000).items()
-
 	else:
 		#neighbours_ids = api.friends_ids(user)
 		neighbours_ids = tweepy.Cursor(api.friends_ids, id=user, count=5000).items()
-
 	neighbours_ids = [n for n in neighbours_ids]
-	
 	# for pages
 	#for n in neighbours_ids:
 	#	neighbours_ids.extend(n)
@@ -42,20 +38,17 @@ def api_neighbours_ids(user, api, direction="in"):
 def fetch_neighbours(userid, api, direction="in", force=False):
 	fname = os.path.join(PATHS[direction], str(userid))
 	neighbours = []
-
 	# If user is already tracked, get their followers from file
 	if(not force):
 		if os.path.isfile(fname):
 			print("User had already been fetched")
 			return 0
-
 	# otherwise use the API
 	try:
 		with open(fname, 'w') as f:
 			print("fetching neighbours")
 			neighbours = api_neighbours_ids(userid, api, direction)
 			csv.writer(f).writerow(neighbours)
-
 	except TweepError as e:
 		print(e)
 		if e == "Not authorized.":
@@ -65,7 +58,6 @@ def fetch_neighbours(userid, api, direction="in", force=False):
 
 def screen_names(users, api):
 	"""Get the screen name of users"""
-	
 	# Get screen_name of each neighbour and store in into a file    
 	n_users = len(users) + 1
 	batch_start = 0
@@ -81,7 +73,6 @@ def screen_names(users, api):
 		except TweepError as e:
 			print(e)
 			time.sleep(60)
-
 		batch_start += 100
 		batch_end = min(batch_end+100, n_users)
 
@@ -209,8 +200,6 @@ def make_adjacency_matrix(users,  direction="out", file = "adjacency.csv"):
 
 def graph_ego(ego_screenname, api, direction="in"):
 	"""Build the a graph of the egonet of ego in Gephi format"""
-
-	
 	ego = api.get_user(ego_screenname).id
 	
 	all_neighbours = {}

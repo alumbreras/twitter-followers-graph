@@ -7,6 +7,6 @@ PATHS = {"in": "./data/fetched/followers/",
          "tracked": "./data/fetched/tracked/",
          "outputs": "./outputs/"}
 
-for key, path in PATHS:
+for path in PATHS.values():
     if not os.path.exists(path):
         os.makedirs(path)

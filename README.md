@@ -14,9 +14,9 @@ You are supposed to have a config.yml file in the same directory, with your keys
 
 Then there are three functions to be executed secuentially:
 
-*  **python egonet.py -u johnsnow -f api_followers**
+*  **python egonet.py -u johnsnow -f followers**
 
-*  **python egonet.py -u johnsnow -f api_followees**
+*  **python egonet.py -u johnsnow -f followees**
 
 
 Fetches the followers/followees of user and their followers as well. Store them into files. By storing them into files we can, at different executions, check whether the user had already been fetched and avoid unnecessary API calls. 
@@ -35,9 +35,9 @@ If the screen name of a user is not fetched, the `graph()` function will assign 
 
 This is very cheap in terms of API calls since we can retrieve 100 screen names per call.
 
-*  **python egonet.py -u johnsnow -f graph_followers**
+*  **python egonet.py -u johnsnow -f followers_graph**
 
-*  **python egonet.py -u johnsnow -f graph_followees**
+*  **python egonet.py -u johnsnow -f followees_graph**
 
 
 Builds a graph file (graphML format) form the information stored in files (followers and screen names). The graph can be directly opened by Gephi.

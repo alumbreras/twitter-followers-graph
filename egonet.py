@@ -17,7 +17,7 @@ from config import PATHS
 # CONSUMER_KEY: 6it3IkPFI4RNIGhIci1w
 # CONSUMER_SECRET: zGUE1bTucHcNn5IxFNyBP8dN2EvbrMtij5xuWHqcW0
 with open('config.yml', 'r') as f:
-    doc = yaml.load(f)
+    doc = yaml.load(f, Loader=yaml.FullLoader)
     CONSUMER_KEY = doc["CONSUMER_KEY"]
     CONSUMER_SECRET = doc["CONSUMER_SECRET"]
 
