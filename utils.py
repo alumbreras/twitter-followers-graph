@@ -17,18 +17,6 @@ from matplotlib import pylab as plt
 from collections import Counter
 
 
-PATHS = {"in": "./followers/",
-		 "out": "./followees/",
-		 "names": "./screen_names/",
-		 "users": "./users/",
-		 "tracked": "./tracked/",
-		 "outputs": "./outputs/"}
-
-
-path = './users/'
-if not os.path.exists(path):
-    os.makedirs(path)
-
 ##################################################
 # Functions that fetch neighbours and screen names
 ##################################################
@@ -260,7 +248,7 @@ def graph_ego(ego_screenname, api, direction="in"):
 			
 	# Create graphML
 	print("Writing graph...")
-	path = './outputs/'
+	path = PATHS['outputs']
 	if not os.path.exists(path):
 		os.makedirs(path)
 	

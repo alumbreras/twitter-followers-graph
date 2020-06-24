@@ -14,6 +14,7 @@ from tweepy import TweepError
 from matplotlib import pylab as plt
 from collections import Counter
 import utils
+from config import PATHS
 
 with open('config_keywords.yml', 'r') as f:
     doc = yaml.load(f)
@@ -28,24 +29,6 @@ api = tweepy.API(auth)
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, retry_errors=88, retry_delay=60)
 
 
-path = './followers/'
-if not os.path.exists(path):
-    os.makedirs(path)
-
-path = './outputs/'
-if not os.path.exists(path):
-    os.makedirs(path)
-
-path = './screen_names/'
-if not os.path.exists(path):
-    os.makedirs(path)
-
-PATHS = {"in": "./followers/",
-         "out": "./followees/",
-         "names": "./screen_names/",
-         "outputs": "./outputs/"}
-
-
 def get_participants(keyword):
     participants = {}
     with open('tracked/' + keyword + ".json", 'r') as f:    
@@ -53,7 +36,6 @@ def get_participants(keyword):
         for entry in data:
             if entry["user_id"] not in participants:
                 participants[entry["user_id"]] = entry['user'] 
-
     return participants
 
 def get_locations(keyword):
@@ -61,8 +43,7 @@ def get_locations(keyword):
     with open('tracked/' + keyword + ".json", 'r') as f:    
         data = json.load(f)
         for entry in data:
-            locations.append(entry['user_location'])       
-
+            locations.append(entry['user_location'])
     return locations
  
     
@@ -76,7 +57,6 @@ def api_participans_neighbours(keyword):
         print("Processed:" + str(i) + "/" + str(len(participants)))
         print("User: ", str(pid))
         fetch_neighbours(pid)
-
         with open(os.path.join('screen_names', str(pid)), 'w') as f:
             f.write(participants[uid])
 
@@ -121,7 +101,6 @@ def build_graph(keyword):
                 if fid in tracked_participants:
                     edges.append((participants[fid], participants[uid]))
 
-
     # Save to file
     fname = os.path.join(PATHS['outputs'], 'edges' + keyword + '.csv')
     print("Writing to file:", fname)
@@ -142,7 +121,6 @@ def build_dataset_participations():
             for entry in data:
                 if entry["user_id"] not in participants:
                     participants[entry["user_id"]] = entry['user']
-
         return participants
 
 
@@ -172,13 +150,10 @@ if __name__ == '__main__':
             if function == 'api_neighbours':
                 api_participans_neighbours(keyword)
                 build_graph(keyword)
-
             if function == 'build_graph': 
                 build_graph(keyword)
-
             if function == 'dataset_participations': 
                 build_dataset_participations()
-            
             break
         except TweepError as e:
             print(e)

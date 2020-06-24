@@ -16,7 +16,6 @@ auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, retry_delay=60)
 
 
-
 def download_list(user, lista, file):
 	print(lista, "api...")
 	users  = tweepy.Cursor(api.list_members, user, lista).items()
@@ -24,6 +23,7 @@ def download_list(user, lista, file):
 		csvwriter = csv.writer(f, delimiter=' ')
 		for user in users:
 			csvwriter.writerow([user.screen_name])
+
 
 if __name__ == '__main__':
     
@@ -37,5 +37,4 @@ if __name__ == '__main__':
 	file = args['file']
 	if file == None:
 		file = lista
-
 	download_list(user, lista, file)

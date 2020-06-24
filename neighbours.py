@@ -12,6 +12,7 @@ import time
 from tweepy import TweepError
 import utils
 from utils import fetch_neighbours, make_similarity_matrix, make_adjacency_matrix
+from config import PATHS
 
 with open('config_neighbours.yml', 'r') as f:
     doc = yaml.load(f)
@@ -21,13 +22,6 @@ with open('config_neighbours.yml', 'r') as f:
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, retry_delay=60)
-
-PATHS = {"in": "./followers/",
-         "out": "./followees/",
-         "names": "./screen_names/",
-         "outputs": "./outputs/"}
-
-
 
 if __name__ == '__main__':
     

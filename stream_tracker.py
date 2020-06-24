@@ -9,6 +9,7 @@ import codecs
 import yaml
 import json
 import os
+from config import PATHS
 
 with open('config_keywords.yml', 'r') as f:
     doc = yaml.load(f)
@@ -16,16 +17,11 @@ with open('config_keywords.yml', 'r') as f:
     CONSUMER_SECRET = doc["CONSUMER_SECRET"]
     ACCESS_TOKEN = doc["ACCESS_TOKEN"]
     ACCESS_TOKEN_SECRET = doc["ACCESS_TOKEN_SECRET"]
-
-path = './tracked/'
-if not os.path.exists(path):
-    os.makedirs(path)
+    
 
 class MyStreamListener(tweepy.StreamListener):
     
-
     def on_status(self, status):
-        
         #hahstags = status.entities.get('hashtags')
         #hashtags = [{'text': keywords[0][1:]}]
         keyword = keywords[0]
@@ -56,8 +52,6 @@ class MyStreamListener(tweepy.StreamListener):
 
 
 def stream_track(keywords):
-
-
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)

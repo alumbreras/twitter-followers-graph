@@ -1,5 +1,3 @@
-* followers, followees, tracked etc in /data/directory
-
 * Similarity matrix can also be plotted as a graph: why labels don't appean in Gephi?
 
 * Create a participation dataset
