@@ -12,7 +12,7 @@ import os
 from config import PATHS
 
 with open('config.yml', 'r') as f:
-    doc = yaml.load(f)
+    doc = yaml.load(f, Loader=yaml.FullLoader)
     CONSUMER_KEY = doc["CONSUMER_KEY"]
     CONSUMER_SECRET = doc["CONSUMER_SECRET"]
     ACCESS_TOKEN = doc["ACCESS_TOKEN"]
@@ -40,7 +40,7 @@ class MyStreamListener(tweepy.StreamListener):
         #    f.write(line)
             
         fname = keyword + '.json'
-        with codecs.open('./tracked/' + fname, "a", "utf-8") as f:
+        with codecs.open(PATHS['tracked'] + fname, "a", "utf-8") as f:
             data = {}
             data['user'] = user
             data['user_id'] = user_id
