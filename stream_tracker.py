@@ -11,13 +11,13 @@ import json
 import os
 from config import PATHS
 
-with open('config_keywords.yml', 'r') as f:
+with open('config.yml', 'r') as f:
     doc = yaml.load(f)
     CONSUMER_KEY = doc["CONSUMER_KEY"]
     CONSUMER_SECRET = doc["CONSUMER_SECRET"]
     ACCESS_TOKEN = doc["ACCESS_TOKEN"]
     ACCESS_TOKEN_SECRET = doc["ACCESS_TOKEN_SECRET"]
-    
+
 
 class MyStreamListener(tweepy.StreamListener):
     
@@ -58,7 +58,7 @@ def stream_track(keywords):
 
     myStreamListener = MyStreamListener()
     myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
-    myStream.filter(track=keywords, async=False) # block the main thread
+    myStream.filter(track=keywords, is_async=False) # block the main thread
 
 
 if __name__ == '__main__':
