@@ -61,8 +61,7 @@ Once in Gephi, I recommend the following steps (I assume you know how to do this
 
 Have fun!
 
-![ego alberto_lm](https://github.com/alumbreras/twitter-followers-graph/blob/master/outputs/alberto_lm.png) 
-
+![ego alberto_lm](https://github.com/alumbreras/twitter-followers-graph/blob/ea0ed334d1d7225a80ea514f59cbbda434b667b0/outputs/alberto_lm.png) 
 
 
 ## Keyword Communities
