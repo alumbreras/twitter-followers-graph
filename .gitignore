@@ -1,6 +1,10 @@
 .ipynb_checkpoints/
+venv/*
+tracked/*
+fetched/*
+
 *.yml
 *.yaml
-*outputs/*
-*__pycache__*
-./tracked/#pensionesdignas.json
+outputs/*
+__pycache__*
+/tracked/#pensionesdignas.json
