@@ -3,7 +3,12 @@
 import scipy
 import tensorflow as tf
 import numpy as np
-import json
+
+import condor
+from condor.config import PATHS
+from condor.utils.utils_json import load_jsonl
+
+# Execute with python -m condor.nlp.tweets_embedding from root folder
 
 # Read tweets from json file.
 # V: size of vocabulary
@@ -14,8 +19,12 @@ import json
 # VAE: X_{*d} = p(x | z)
 # MF-VAE?: X_{*d} = p(x | Wh)
 
-file = 
-#TODO: read json file, but in the future we will use JSON lines format.
-def read_file(file):
-    
+def read_file(keyword="hola"):
+    filename = PATHS['tracked'] + keyword + ".jsonl"
+    data = load_jsonl(filename)
+    print(filename)
+    print(data)
 
+
+if __name__ == '__main__':
+    read_file()

@@ -1,4 +1,6 @@
-# Twitter tracker
+# Condor
+
+A toolkit to analyse tweets and users who tweet.
 
 ## Egonets
 

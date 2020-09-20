@@ -22,8 +22,6 @@ with open('config.yml', 'r') as f:
 class MyStreamListener(tweepy.StreamListener):
     
     def on_status(self, status):
-        #hahstags = status.entities.get('hashtags')
-        #hashtags = [{'text': keywords[0][1:]}]
         keyword = keywords[0]
 
         coordinates = status.coordinates
@@ -33,13 +31,8 @@ class MyStreamListener(tweepy.StreamListener):
         user_location = status.user.location
         text = status.text
         print(text)
-
-        #fname = keyword + '.txt'
-        #line = "LINE:" + user + '\t' + str(user_id) + '\t' + str(epochs) + '\t' + text + '\n'
-        #with codecs.open('./tracked/'+ fname, "a", "utf-8") as f:
-        #    f.write(line)
             
-        fname = keyword + '.json'
+        fname = keyword + '.jsonl'
         with codecs.open(PATHS['tracked'] + fname, "a", "utf-8") as f:
             data = {}
             data['user'] = user
@@ -47,9 +40,7 @@ class MyStreamListener(tweepy.StreamListener):
             data['user_location'] = user_location
             data['timestamp'] = epochs
             data['text'] = text
-            f.write(json.dumps(data, indent = 4, ensure_ascii=False))
-            f.write(",")
-
+            f.write(json.dumps(data, ensure_ascii=False) + '\n')
 
 def stream_track(keywords):
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
