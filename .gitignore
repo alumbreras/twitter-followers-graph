@@ -1,7 +1,7 @@
 .ipynb_checkpoints/
 venv/*
 tracked/*
-fetched/*
+data/fetched/*
 
 *.yml
 *.yaml
