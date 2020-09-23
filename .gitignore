@@ -1,10 +1,11 @@
 .ipynb_checkpoints/
 venv/*
 tracked/*
-data/fetched/*
+*/data/*
 
 *.yml
 *.yaml
 outputs/*
 __pycache__*
+condor.egg-info/*
 /tracked/#pensionesdignas.json
